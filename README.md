@@ -335,3 +335,23 @@ Join the **[No-Code Architects Community](https://www.skool.com/no-code-architec
 ## License
 
 This project is licensed under the [GNU General Public License v2.0 (GPL-2.0)](LICENSE).
+
+
+LLAMA Code:
+
+docker exec -it ollama ollama create llama-3.2-1b-instruct-q8_0 -f /models/Modelfile
+docker exec -it ollama ollama run llama-3.2-1b-instruct-q8_0 "Explain zero trust in one sentence"
+
+
+4. Use it from n8n
+
+In an HTTP Request node in n8n:
+
+POST → http://ollama:11434/api/generate
+
+JSON body:
+
+{
+  "model": "llama-3.2-1b-instruct-q8_0",
+  "prompt": "Summarize ransomware attacks in one paragraph"
+}

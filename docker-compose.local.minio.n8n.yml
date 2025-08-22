@@ -64,6 +64,18 @@ services:
     networks:
       - nca-network
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+      - ./models:/models  # store GGUF models locally
+    ports:
+      - "11434:11434"
+    networks:
+      - nca-network
+
 volumes:
   storage:
     driver: local
@@ -72,6 +84,8 @@ volumes:
   minio_data:
     driver: local
   n8n_data:
+    driver: local
+  ollama_data:        
     driver: local
 
 networks:
