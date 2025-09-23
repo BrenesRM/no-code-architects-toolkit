@@ -1,0 +1,142 @@
+{
+  "name": "Facebook Image Scheduler",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "sheetId": "1HuG4PdIQ_YTB_x2iKNNX9v9rbVAIHJRqi4Ilk8JQzfw",
+        "range": "Sheet1!A:E"
+      },
+      "id": "2",
+      "name": "Get Posts from Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 2,
+      "position": [
+        500,
+        300
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "\n                const now = new Date();\n                return items.filter(item => {\n                  const time = new Date(item.json.scheduled_time);\n                  return item.json.status !== 'Posted' && time <= now;\n                });\n                "
+      },
+      "id": "3",
+      "name": "Filter Scheduled Posts",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        750,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "requestMethod": "POST",
+        "url": "https://graph.facebook.com/v19.0/YOUR_PAGE_ID/photos",
+        "options": {},
+        "bodyParametersUi": {
+          "parameter": [
+            {
+              "name": "url",
+              "value": "={{$json[\"image_url\"]}}"
+            },
+            {
+              "name": "caption",
+              "value": "={{$json[\"caption\"]}}"
+            },
+            {
+              "name": "access_token",
+              "value": "YOUR_PAGE_ACCESS_TOKEN"
+            }
+          ]
+        }
+      },
+      "id": "4",
+      "name": "Post to Facebook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "sheetId": "1HuG4PdIQ_YTB_x2iKNNX9v9rbVAIHJRqi4Ilk8JQzfw",
+        "key": "id",
+        "valueInput": "={{$json[\"id\"]}}",
+        "range": "Sheet1!A:E",
+        "updateFields": {
+          "fieldNames": [
+            "status"
+          ],
+          "fieldValues": [
+            "Posted"
+          ]
+        }
+      },
+      "id": "5",
+      "name": "Mark as Posted",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 2,
+      "position": [
+        1250,
+        300
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          "Get Posts from Sheet"
+        ]
+      ]
+    },
+    "Get Posts from Sheet": {
+      "main": [
+        [
+          "Filter Scheduled Posts"
+        ]
+      ]
+    },
+    "Filter Scheduled Posts": {
+      "main": [
+        [
+          "Post to Facebook"
+        ]
+      ]
+    },
+    "Post to Facebook": {
+      "main": [
+        [
+          "Mark as Posted"
+        ]
+      ]
+    }
+  },
+  "active": false
+}

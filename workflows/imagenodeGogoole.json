@@ -1,0 +1,80 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "facebook-photo-upload",
+        "options": {}
+      },
+      "id": "1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "facebook-photo-upload"
+    },
+    {
+      "parameters": {
+        "url": "https://drive.google.com/uc?export=download&id=1bUBtXIE0GrQrbUYcSxbFIpkK9OFepD6V",
+        "responseFormat": "file",
+        "dataPropertyName": "data"
+      },
+      "id": "2",
+      "name": "Fetch Google Drive Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://graph.facebook.com/v21.0/me/photos",
+        "method": "POST",
+        "responseFormat": "json",
+        "options": {},
+        "sendBinaryData": true,
+        "binaryPropertyName": "data",
+        "bodyParametersUi": {
+          "parameter": [
+            {
+              "name": "caption",
+              "value": "Uploaded from n8n 🚀"
+            },
+            {
+              "name": "access_token",
+              "value": "YOUR_ACCESS_TOKEN"
+            }
+          ]
+        }
+      },
+      "id": "3",
+      "name": "Upload Photo to Facebook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [750, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Fetch Google Drive Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Google Drive Image": {
+      "main": [
+        [
+          {
+            "node": "Upload Photo to Facebook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
