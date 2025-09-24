@@ -346,6 +346,8 @@ LLAMA Code:
 
 In Windows:
 docker exec -i ollama ollama create llama-3.2-1b-instruct-q8_0 -f /models/Modelfile  
+docker exec -it ollama bash  
+ollama create gpt-oss-20b-MXFP4 -f /models/Modelfile    
 
 Linux  
 docker exec -it ollama ollama create llama-3.2-1b-instruct-q8_0 -f /models/Modelfile  
@@ -364,5 +366,6 @@ JSON body:
   "model": "llama-3.2-1b-instruct-q8_0",
   "prompt": "Summarize ransomware attacks in one paragraph"
 }
+
 
 
