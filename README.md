@@ -337,15 +337,19 @@ Join the **[No-Code Architects Community](https://www.skool.com/no-code-architec
 This project is licensed under the [GNU General Public License v2.0 (GPL-2.0)](LICENSE).
 
 no-code-architects-toolkit$ sudo chmod +x install_n8n.sh
-no-code-architects-toolkit$ sudo dos2unix install_n8n.sh
+no-code-architects-toolkit$ sudo dos2unix install_n8n.sh  
 
-sudo docker compose -f docker-compose.local.minio.n8n.yml build
-sudo docker compose -f docker-compose.local.minio.n8n.yml up
+sudo docker compose -f docker-compose.local.minio.n8n.yml build  
+sudo docker compose -f docker-compose.local.minio.n8n.yml up  
 
 LLAMA Code:
 
-docker exec -it ollama ollama create llama-3.2-1b-instruct-q8_0 -f /models/Modelfile
-docker exec -it ollama ollama run llama-3.2-1b-instruct-q8_0 "Explain zero trust in one sentence"
+In Windows:
+docker exec -i ollama ollama create llama-3.2-1b-instruct-q8_0 -f /models/Modelfile  
+
+Linux  
+docker exec -it ollama ollama create llama-3.2-1b-instruct-q8_0 -f /models/Modelfile  
+docker exec -it ollama ollama run llama-3.2-1b-instruct-q8_0 "Explain zero trust in one sentence"  
 
 
 4. Use it from n8n
@@ -360,4 +364,5 @@ JSON body:
   "model": "llama-3.2-1b-instruct-q8_0",
   "prompt": "Summarize ransomware attacks in one paragraph"
 }
+
 
