@@ -12,6 +12,7 @@ services:
     depends_on:
       - minio
       - minio-init
+      - postgres
     networks:
       - nca-network
 
@@ -58,9 +59,17 @@ services:
       - WEBHOOK_URL=http://localhost:5678/
       - GENERIC_TIMEZONE=UTC
       - N8N_SECURE_COOKIE=false
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=n8n_user
+      - DB_POSTGRESDB_PASSWORD=n8n_password
     volumes:
       - n8n_data:/home/node/.n8n
       - ./local-files:/files
+    depends_on:
+      - postgres
     networks:
       - nca-network
 
@@ -70,9 +79,33 @@ services:
     restart: unless-stopped
     volumes:
       - ollama_data:/root/.ollama
-      - ./models:/models  # store GGUF models locally
+      - ./models:/models
     ports:
       - "11434:11434"
+    networks:
+      - nca-network
+    environment:
+      OLLAMA_HOST: "0.0.0.0"
+      OLLAMA_KEEP_ALIVE: "10m"
+      OLLAMA_MAX_QUEUE: "1024"
+      OLLAMA_NUM_PARALLEL: "4"
+      OLLAMA_CONTEXT_LENGTH: "2048"
+      OLLAMA_LOAD_TIMEOUT: "10m"
+      OLLAMA_FLASH_ATTENTION: "true"
+      OLLAMA_GPU_OVERHEAD: "512"
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: n8n_user
+      POSTGRES_PASSWORD: n8n_password
+      POSTGRES_DB: n8n
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     networks:
       - nca-network
 
@@ -85,7 +118,9 @@ volumes:
     driver: local
   n8n_data:
     driver: local
-  ollama_data:        
+  ollama_data:
+    driver: local
+  postgres_data:
     driver: local
 
 networks:
