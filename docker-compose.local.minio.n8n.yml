@@ -1,3 +1,5 @@
+version: '3.9'
+
 services:
   ncat:
     build: .
@@ -47,7 +49,7 @@ services:
       - nca-network
 
   n8n:
-    image: docker.n8n.io/n8nio/n8n
+    image: docker.n8n.io/n8nio/n8n:latest
     restart: unless-stopped
     ports:
       - "5678:5678"
@@ -109,6 +111,24 @@ services:
     networks:
       - nca-network
 
+  # 🧠 New: PostgreSQL with pgvector for AI / embeddings 
+  # postgresql://vector_user:vector_password@pgvector:5432/vector_db 
+  # CREATE EXTENSION IF NOT EXISTS vector;
+  pgvector:
+    image: ankane/pgvector:latest
+    container_name: pgvector
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: vector_user
+      POSTGRES_PASSWORD: vector_password
+      POSTGRES_DB: vector_db
+    volumes:
+      - pgvector_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - nca-network
+
 volumes:
   storage:
     driver: local
@@ -121,6 +141,8 @@ volumes:
   ollama_data:
     driver: local
   postgres_data:
+    driver: local
+  pgvector_data:
     driver: local
 
 networks:
